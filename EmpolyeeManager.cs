@@ -33,11 +33,12 @@ namespace PayRoll_Service
         }
         public void UpdateSalary()
         {
+            Task thread = 
             Console.WriteLine("Enter the Employee Name:");
-            string name= (Console.ReadLine());
+            string name = (Console.ReadLine());
             Console.WriteLine("Enter update Salary");
-            int s=int.Parse(Console.ReadLine());
-            var flag = repo.UpdateEmployeeSalary(name,s);
+            int s = int.Parse(Console.ReadLine());
+            var flag = repo.UpdateEmployeeSalary(name, s);
             if (flag)
             {
                 Console.WriteLine("Employee Salary Update Successfully..");
@@ -51,10 +52,10 @@ namespace PayRoll_Service
         {
             Console.WriteLine("Enter the Range of Date(YYYY-MM-DD):");
             Console.WriteLine("Enter the start date");
-            var r1=Console.ReadLine();   
+            var r1 = Console.ReadLine();
             Console.WriteLine("Enter the end date");
-            var r2=Console.ReadLine();
-            var employees = repo.GetEmpolyeeByDataRange(r1,r2);
+            var r2 = Console.ReadLine();
+            var employees = repo.GetEmpolyeeByDataRange(r1, r2);
             if (employees.Count <= 0)
             {
                 Console.WriteLine($"list is empty");
@@ -86,7 +87,7 @@ namespace PayRoll_Service
         }
         public void InsertData()
         {
-            Stopwatch stopwatch= new Stopwatch();
+            Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             Employee employee = new Employee();
             Console.Write("Enter Name: ");
@@ -96,7 +97,7 @@ namespace PayRoll_Service
             Console.Write("Enter Date: ");
             employee.Date = Console.ReadLine();
             Console.Write("Enter Gender: ");
-            employee.Gender =Console.ReadLine();
+            employee.Gender = Console.ReadLine();
 
             var flag = repo.InsertEmployee(employee);
             if (flag)
@@ -108,7 +109,37 @@ namespace PayRoll_Service
                 Console.WriteLine("Failed While Adding Employee");
             }
             stopwatch.Stop();
-            Console.WriteLine("Time Taken for Execution: "+stopwatch.ElapsedMilliseconds+"ms");
+            Console.WriteLine("Time Taken for Execution Without thread: " + stopwatch.ElapsedMilliseconds + "ms");
+
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            Task thread = new Task(() =>
+            {
+                Employee employee = new Employee();
+                Console.Write("Enter Name: ");
+                employee.EmployeeName = Console.ReadLine();
+                Console.Write("Enter Salary: ");
+                employee.Salary = int.Parse(Console.ReadLine());
+                Console.Write("Enter Date: ");
+                employee.Date = Console.ReadLine();
+                Console.Write("Enter Gender: ");
+                employee.Gender = Console.ReadLine();
+
+                var flag = repo.InsertEmployee(employee);
+                if (flag)
+                {
+                    Console.WriteLine("Employee Created Successfully..");
+                }
+                else
+                {
+                    Console.WriteLine("Failed While Adding Employee");
+                }
+            });
+            thread.Start();
+            thread.Wait();
+            sw.Stop();
+            Console.WriteLine("Time Taken for Execution With thread: " + sw.ElapsedMilliseconds + "ms");
         }
         public void Delete()
         {
